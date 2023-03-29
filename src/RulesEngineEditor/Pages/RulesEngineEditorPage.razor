@@ -4,6 +4,7 @@
 *@
 @using RulesEngineEditor.Models
 @using RulesEngineEditor.Components
+@using System.Text.RegularExpressions;
 @inject NavigationManager NavigationManager
 @inject RulesEngineEditor.Services.WorkflowService WorkflowService
 @implements IDisposable
@@ -77,8 +78,19 @@
 
 @if (WorkflowService.Workflows.Count > 0)
 {
-    <div class="sp_grid_main" hidden="@(!ShowWorkflows)">
+    <sp_grid_tabs class="grid-template-columns-3 mt-4" hidden="@(!ShowWorkflows)">
         <div>
+            <button class="reeditor_menubutton @IsPressed(ShowDesigner, "menubutton_depressed")" @onclick="(() => { ShowDesigner = true; ShowDesignerAndJson = false; ShowJson = false; })">Designer</button>
+        </div>
+        <div>
+            <button class="reeditor_menubutton @IsPressed(ShowDesignerAndJson, "menubutton_depressed")" @onclick="(() => { ShowDesigner = false; ShowDesignerAndJson = true; ShowJson = false; })">Designer and JSON</button>
+        </div>
+        <div>
+            <button class="reeditor_menubutton @IsPressed(ShowJson, "menubutton_depressed")" @onclick="(() => { ShowDesigner = false; ShowDesignerAndJson = false; ShowJson = true; })">JSON</button>
+        </div>
+    </sp_grid_tabs>
+    <div class="sp_grid_main @(ShowDesigner || ShowJson ? "grid-template-columns-1" : string.Empty)" hidden="@(!ShowWorkflows)">
+        <div hidden="@ShowJson">
             @if (sort_wf)
             {
                 <Dropzone TItem="WorkflowData" OnItemDrop="@((i)=>WorkflowDragEnd(i))" Items="@(CurrentWorkflowName == null || CurrentWorkflowName == "ALL" ? WorkflowService.Workflows : WorkflowService.Workflows.Where(w => w.WorkflowName == CurrentWorkflowName).ToList())" Class="reeditor_dragdrop">
@@ -115,9 +127,9 @@
                 }
             }
         </div>
-        <div>
+        <div hidden="@ShowDesigner">
             <span class="JSONErrors">@workflowJSONErrors</span>
-            <textarea @bind="WorkflowsJSON" class="jsonTextArea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <textarea @bind="WorkflowsJSON" rows="@(Regex.Matches(WorkflowsJSON, "\n").Count + 1)" class="jsonTextArea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         </div>
     </div>
     <div hidden="@(ShowWorkflows)">
@@ -146,8 +158,20 @@
             <button title="Add Input" class="reeditor_button" @onclick="AddInput">Add</button>
         }
 
-        <div class="sp_grid_main" hidden="@(!WorkflowService.Inputs.Any())">
+        <sp_grid_tabs class="grid-template-columns-3 mt-4" hidden="@(!WorkflowService.Inputs.Any())">
             <div>
+                <button class="reeditor_menubutton @IsPressed(ShowDesigner, "menubutton_depressed")" @onclick="(() => { ShowDesigner = true; ShowDesignerAndJson = false; ShowJson = false; })">Designer</button>
+            </div>
+            <div>
+                <button class="reeditor_menubutton @IsPressed(ShowDesignerAndJson, "menubutton_depressed")" @onclick="(() => { ShowDesigner = false; ShowDesignerAndJson = true; ShowJson = false; })">Designer and JSON</button>
+            </div>
+            <div>
+                <button class="reeditor_menubutton @IsPressed(ShowJson, "menubutton_depressed")" @onclick="(() => { ShowDesigner = false; ShowDesignerAndJson = false; ShowJson = true; })">JSON</button>
+            </div>
+        </sp_grid_tabs>
+
+        <div class="sp_grid_main  @(ShowDesigner || ShowJson ? "grid-template-columns-1" : string.Empty)" hidden="@(!WorkflowService.Inputs.Any())">
+            <div hidden="@ShowJson">
                 @if (sort_ip)
                 {
                     <Dropzone Items="WorkflowService.Inputs" Class="reeditor_dragdrop">
@@ -166,9 +190,9 @@
                     }
                 }
             </div>
-            <div>
+            <div hidden="@ShowDesigner">
                 <span class="JSONErrors">@inputJSONErrors</span>
-                <textarea @bind="InputJSON" class="jsonTextArea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                <textarea @bind="InputJSON" rows="@(Regex.Matches(InputJSON, "\n").Count + 1)" class="jsonTextArea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
             </div>
         </div>
     </div>
