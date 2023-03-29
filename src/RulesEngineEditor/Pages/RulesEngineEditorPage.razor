@@ -1,10 +1,9 @@
-﻿@*
+@*
     // Copyright (c) Alex Reich.
     // Licensed under the CC BY 4.0 License.
 *@
 @using RulesEngineEditor.Models
 @using RulesEngineEditor.Components
-@using System.Text.RegularExpressions;
 @inject NavigationManager NavigationManager
 @inject RulesEngineEditor.Services.WorkflowService WorkflowService
 @implements IDisposable
@@ -129,7 +128,7 @@
         </div>
         <div hidden="@ShowDesigner">
             <span class="JSONErrors">@workflowJSONErrors</span>
-            <textarea @bind="WorkflowsJSON" rows="@(Regex.Matches(WorkflowsJSON, "\n").Count + 1)" class="jsonTextArea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <textarea @bind="WorkflowsJSON" rows="@(WorkflowsJSON.Count(c => c == '\n') + 1)" class="jsonTextArea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         </div>
     </div>
     <div hidden="@(ShowWorkflows)">
@@ -192,7 +191,7 @@
             </div>
             <div hidden="@ShowDesigner">
                 <span class="JSONErrors">@inputJSONErrors</span>
-                <textarea @bind="InputJSON" rows="@(Regex.Matches(InputJSON, "\n").Count + 1)" class="jsonTextArea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                <textarea @bind="InputJSON" rows="@(InputJSON.Count(c => c == '\n') + 1)" class="jsonTextArea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
             </div>
         </div>
     </div>
